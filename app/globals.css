@@ -12,26 +12,45 @@ button { font: inherit; }
 h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
 ul, ol { list-style: none; padding: 0; }
 
-.top { background: var(--surface); border-bottom: 1px solid var(--line2); }
+.top { position: relative; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line2); }
 .top-inner, .page { max-width: 1240px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
-.top-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 28px; padding-top: 12px; padding-bottom: 12px; }
-.brand { display: flex; align-items: center; gap: 10px; }
+/* Three zones: logo left, menu truly centered, account controls right. */
+.top-inner { display: flex; align-items: center; min-height: 68px; }
+.brand { padding: 12px 0; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
 .brand-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--blue); display: flex; align-items: center; justify-content: center; }
 .brand-name { font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
-.brand-site { font-size: 13px; color: var(--muted); }
-.nav { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; margin-right: auto; }
-.nav button { flex: none; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 8px; padding: 8px 12px; font-size: 14px; font-weight: 500; color: var(--ink2); background: transparent; cursor: pointer; }
-.nav button:hover { background: #f1f0ed; }
-.nav button[aria-current="page"] { background: #f1f0ed; color: var(--ink); font-weight: 600; }
+/* Menu: icon + label pills. The current page is filled blue, so it is found at a glance. */
+.nav { display: flex; align-items: center; gap: 6px; margin-left: 32px; min-width: 0; overflow-x: auto; }
+.nav button { flex: none; display: flex; align-items: center; gap: 8px; height: 40px; border: 0; border-radius: 10px; padding: 0 14px; font-size: 14.5px; font-weight: 500; color: #57534e; background: transparent; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s; }
+.nav button:hover { background: #f1f0ed; color: var(--ink); }
+.nav button[aria-current="page"] { background: var(--blue-tint); color: var(--blue); font-weight: 600; }
+.nav button svg { flex: none; }
 .badge { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--amber); color: #fff; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
-.top-right { display: flex; align-items: center; gap: 14px; }
-.switch { display: flex; align-items: center; gap: 10px; border: 0; background: transparent; padding: 6px 4px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink); }
-.switch-track { position: relative; width: 38px; height: 22px; border-radius: 11px; background: #8f8a84; transition: background .2s; }
+.top-right { margin-left: auto; padding: 12px 0; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.top-divider { width: 1px; height: 28px; background: var(--line2); }
+.switch { display: flex; align-items: center; gap: 10px; border: 0; background: transparent; padding: 6px 4px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.switch-track { position: relative; flex: none; width: 38px; height: 22px; border-radius: 11px; background: #8f8a84; transition: background .2s; }
 .switch-knob { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .2s; }
 .switch[aria-checked="true"] .switch-track { background: var(--blue); }
 .switch[aria-checked="true"] .switch-knob { left: 19px; }
-.mode { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink2); background: #f1f0ed; border-radius: 999px; padding: 4px 10px; }
+.tip-wrap { position: relative; display: flex; }
+.tip { position: absolute; top: calc(100% + 10px); right: 0; width: 264px; padding: 10px 12px; border-radius: 10px; background: var(--ink); color: #f5f4f1; font-size: 13px; line-height: 1.45; box-shadow: 0 8px 24px rgba(28,27,26,.22); opacity: 0; visibility: hidden; transform: translateY(-4px); pointer-events: none; transition: opacity .1s, transform .1s, visibility .1s; }
+.tip b { display: block; color: #fff; font-weight: 600; margin-bottom: 2px; }
+.tip::before { content: ''; position: absolute; top: -5px; right: 28px; width: 10px; height: 10px; background: var(--ink); transform: rotate(45deg); border-radius: 2px; }
+.tip-wrap:hover .tip, .tip-wrap:focus-within .tip { opacity: 1; visibility: visible; transform: none; }
+.user { display: flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; border-radius: 999px; box-shadow: 0 0 0 1px var(--line2); white-space: nowrap; }
+.user-avatar { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--blue-tint); color: var(--blue); font-size: 12px; font-weight: 700; letter-spacing: .02em; display: flex; align-items: center; justify-content: center; }
+.user-text { display: flex; flex-direction: column; line-height: 1.25; }
+.user-name { font-size: 14px; font-weight: 600; }
+.user-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; display: inline-block; }
+/* Narrower screens: logo and account on the first row, menu on its own row below, still left-aligned. */
+@media (max-width: 1100px) {
+  .top-inner { flex-wrap: wrap; min-height: 0; }
+  .top-right { order: 2; }
+  .nav { order: 3; flex: 0 0 100%; margin-left: 0; padding: 8px 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) { .tip { right: auto; left: -180px; } .tip::before { right: auto; left: 200px; } .top-divider, .user-text .user-status { display: none; } .top-right { gap: 8px; } .user { padding-right: 12px; } }
 
 .page { padding-top: 28px; padding-bottom: 96px; }
 .split { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }

@@ -32,6 +32,16 @@ const Chip = () => (
   </svg>
 );
 
+const NAV_ICON: Record<View, React.ReactNode> = {
+  requests: <><path d="M22 12h-6l-2 3h-4l-2-3H2" /><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z" /></>,
+  loads: <><path d="M21 8 12 3 3 8v8l9 5 9-5z" /><path d="m3 8 9 5 9-5M12 13v8" /></>,
+  carriers: <><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></>,
+  activity: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+};
+const NavIcon = ({ v }: { v: View }) => (
+  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{NAV_ICON[v]}</svg>
+);
+
 export default function ControlTower({ initial }: { initial: Snapshot }) {
   const [snap, setSnap] = useState(initial);
   const [view, setView] = useState<View>('requests');
@@ -74,24 +84,37 @@ export default function ControlTower({ initial }: { initial: Snapshot }) {
           <div className="brand">
             <span className="brand-mark"><Truck /></span>
             <span className="brand-name">Dockhand</span>
-            <span className="brand-site">Shah Alam DC</span>
           </div>
           <nav className="nav" aria-label="Main">
             {(['requests', 'loads', 'carriers', 'activity'] as View[]).map(v => (
               <button key={v} aria-current={view === v ? 'page' : undefined} onClick={() => setView(v)}>
-                {cap1(v)}{v === 'requests' && needs > 0 && <span className="badge">{needs}</span>}
+                <NavIcon v={v} />{cap1(v)}{v === 'requests' && needs > 0 && <span className="badge">{needs}</span>}
               </button>
             ))}
           </nav>
           <div className="top-right">
-            <button className="switch" role="switch" aria-checked={auto} onClick={() => post('/api/settings', { autonomy: auto ? 'approve' : 'auto' })}
-              title={auto ? 'Agents act alone within limits. Missing fields and rates above benchmark still wait for you.' : 'Agents stop for your approval at every step.'}>
-              <span className="switch-track" aria-hidden="true"><span className="switch-knob" /></span>Auto-run
-            </button>
-            <span className="mode" title={'WMS, TMS and carrier tools are mocked; carrier replies are simulated.' + (snap.mode === 'model' ? ' Agents: ' + snap.models.fast + ' and ' + snap.models.smart + '.' : ' Add ANTHROPIC_API_KEY to use Claude.')}>
-              <span className="dot" style={{ background: snap.mode === 'model' ? '#15803d' : '#a8a29e' }} />
-              {snap.mode === 'model' ? 'Live model' : 'Scripted agents'}
-            </span>
+            {/* Custom tooltip: shows instantly on hover or keyboard focus (native title waits ~1s). */}
+            <div className="tip-wrap">
+              <button className="switch" role="switch" aria-checked={auto} aria-describedby="autorun-tip" onClick={() => post('/api/settings', { autonomy: auto ? 'approve' : 'auto' })}>
+                <span className="switch-track" aria-hidden="true"><span className="switch-knob" /></span>Auto-run
+              </button>
+              <span id="autorun-tip" role="tooltip" className="tip">
+                <b>{auto ? 'Auto-run is on' : 'Auto-run is off'}</b>
+                {auto ? 'Agents act alone within limits. Missing fields and rates above benchmark still wait for you.' : 'Agents stop for your approval at every step. Turn on to let them act alone within limits.'}
+              </span>
+            </div>
+            <span className="top-divider" aria-hidden="true" />
+            {/* Who is signed in, which site they run, and whether agents are live. One chip, one place to look. */}
+            <div className="user" title={'Signed in to Shah Alam DC. WMS, TMS and carrier tools are mocked; carrier replies are simulated.' + (snap.mode === 'model' ? ' Agents: ' + snap.models.fast + ' and ' + snap.models.smart + '.' : ' Add ANTHROPIC_API_KEY to use Claude.')}>
+              <span className="user-avatar" aria-hidden="true">SA</span>
+              <span className="user-text">
+                <span className="user-name">Shah Alam DC</span>
+                <span className="user-status">
+                  <span className="dot" style={{ background: snap.mode === 'model' ? '#15803d' : '#a8a29e' }} />
+                  {snap.mode === 'model' ? 'Live model' : 'Scripted agents'}
+                </span>
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -102,7 +125,7 @@ export default function ControlTower({ initial }: { initial: Snapshot }) {
             <aside className="rail" aria-label="Requests">
               <div className="rail-head">
                 <h1 className="h1">Requests</h1>
-                <button className="btn-sm" onClick={() => { setComposing(true); setError(null); reveal(); }}>+ Test request</button>
+                <button className="btn-sm" onClick={() => { setComposing(true); setError(null); reveal(); }}>Create test request</button>
               </div>
               {GROUPS.map(([state, color]) => {
                 const items = snap.requests.filter(r => r.state === state);
@@ -204,8 +227,9 @@ function Detail({ req, busy, error, open, toggle, auto, next, onApprove, onAsk, 
   return (
     <div>
       <div className="card-head">
-        <div className="from">{(o?.customer && !/unknown|test/i.test(o.customer) ? o.customer : e.company) + ' · ' + (e.test ? o?.contact || 'Test request' : e.from) + ' · ' + e.receivedAt}</div>
-        <h2 className="subject">{e.subject}</h2>
+        <div className="from">{(o?.customer && !/unknown|test/i.test(o.customer) ? o.customer : e.company) + ' · ' + (e.test ? (o?.contact || 'Test request').replace(/\s*\(.*\)\s*$/, '') : e.from) + ' · ' + e.receivedAt}</div>
+        {/* Test emails have no real subject line, so title the card from the parsed order instead of a cut-off first sentence. */}
+        <h2 className="subject">{e.test && o?.pallets ? o.pallets + ' pallets to ' + o.destination : e.subject}</h2>
         <ol className="steps" aria-label="Progress">
           {STEP_LABELS.map((l, i) => {
             const st = i < gi ? 'done' : i > gi ? '' : g.status === 'done' ? 'done' : 'active';
