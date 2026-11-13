@@ -1,0 +1,62 @@
+[
+  {
+    "id": "chilled-ipoh",
+    "note": "Complete request. Should book on its own in auto mode.",
+    "body": "Hi team,\n\nWe need 8 pallets of chilled produce sent to Ipoh by Wednesday 18 Nov, before 10am. Keep it at 2–8°C. Budget is about RM 1,500.\n\nThanks,\nNur Hidayah\nSegar Mart",
+    "expect": { "pallets": 8, "destination": "Ipoh", "temp": "chilled", "deliverDay": 18, "state": "Booked", "plan": "new" }
+  },
+  {
+    "id": "frozen-kt",
+    "note": "Frozen, longest lane, reefer only.",
+    "body": "Hello,\n\nPlease move 12 pallets of frozen seafood to our Kuala Terengganu cold store. It has to arrive by Friday 20 Nov and stay at -18°C.\n\nDaniel Tan\nLautan Foods",
+    "expect": { "pallets": 12, "destination": "Kuala Terengganu", "temp": "frozen", "deliverDay": 20, "state": "Booked", "plan": "new" }
+  },
+  {
+    "id": "penang-fits",
+    "note": "12 + 10 already on LD-2291 = 22 of 26. Should consolidate.",
+    "body": "Hi,\n\n12 pallets of dry goods to Penang please, delivery by Thursday 19 Nov. Tail-lift needed at the store.\n\nRegards,\nWei Ling\nPasar Utara",
+    "expect": { "pallets": 12, "destination": "Penang", "temp": "ambient", "deliverDay": 19, "state": "Booked", "plan": "LD-2291" }
+  },
+  {
+    "id": "penang-too-big",
+    "note": "20 + 10 = 30 is over a truck. Must not consolidate.",
+    "body": "Hi,\n\nWe have 20 pallets of canned food for Penang, to arrive by Friday 20 Nov.\n\nThanks,\nHafiz\nBesta Foods",
+    "expect": { "pallets": 20, "destination": "Penang", "temp": "ambient", "deliverDay": 20, "state": "Booked", "plan": "new" }
+  },
+  {
+    "id": "jb-shorthand",
+    "note": "\"JB\" shorthand. 5 + 20 on LD-2290 = 25. Should consolidate.",
+    "body": "Morning,\n\n5 pallets of spare parts to JB, must be there Tuesday 17 Nov.\n\nKevin\nMesra Auto",
+    "expect": { "pallets": 5, "destination": "Johor Bahru", "temp": "ambient", "deliverDay": 17, "state": "Booked", "plan": "LD-2290" }
+  },
+  {
+    "id": "jb-chilled",
+    "note": "LD-2290 is ambient. A chilled order must get its own reefer.",
+    "body": "Hi,\n\n4 pallets of chilled yoghurt to Johor Bahru by Thursday 19 Nov, kept at 4°C.\n\nThanks,\nMei\nSusu Segar",
+    "expect": { "pallets": 4, "destination": "Johor Bahru", "temp": "chilled", "deliverDay": 19, "state": "Booked", "plan": "new" }
+  },
+  {
+    "id": "malay-mixed",
+    "note": "Malay and English mixed. The scripted reader is expected to miss this; the model should not.",
+    "body": "Salam,\n\nTolong hantar 10 palet barang kering ke Melaka sebelum Khamis 19 Nov. Boleh confirm harga dulu?\n\nTerima kasih,\nFarah\nKedai Runcit Farah",
+    "expect": { "pallets": 10, "destination": "Melaka", "temp": "ambient", "deliverDay": 19, "state": "Booked", "plan": "new" }
+  },
+  {
+    "id": "vague",
+    "note": "No count, no city, no date. Must be held and never planned.",
+    "body": "Hi, can you send some of our stock up north next week? Let me know the price.\n\nRaj",
+    "expect": { "pallets": 0, "state": "Needs you", "mustMiss": ["pallet", "city"] }
+  },
+  {
+    "id": "weight-only",
+    "note": "Gives kilograms, not pallets. Must ask rather than convert.",
+    "body": "Hello,\n\nWe need 3,000 kg of rice moved to Seremban by Wednesday 18 Nov.\n\nAhmad\nBeras Emas",
+    "expect": { "pallets": 0, "destination": "Seremban", "state": "Needs you", "mustMiss": ["pallet"] }
+  },
+  {
+    "id": "unserved-city",
+    "note": "Kota Kinabalu is not a lane from Shah Alam DC. Must be held.",
+    "body": "Hi,\n\n8 pallets of furniture to Kota Kinabalu by Friday 20 Nov please.\n\nLina\nRumah Kayu",
+    "expect": { "pallets": 8, "state": "Needs you", "mustMiss": ["city"] }
+  }
+]
